@@ -51,7 +51,9 @@
 
 <body ng-controller="GridController">
 
-    <!-- /*<h1>Region, Country, and City Grid</h1> -->
+    <h1>Region, Country, and City Grid</h1>
+
+    <button ng-click="clearAllFilters()">Clear Filters</button>
 
     <table>
         <thead>
@@ -93,12 +95,12 @@
                     </select>
                 </th>
                 <th>
-                    Language
-                    <span class="filter-icon" ng-click="toggleFilter('Language')">🔻</span>
-                    <select class="filter-dropdown" ng-model="filters.Language"
-                        ng-click="initializeFilterOptions('Language')" ng-change="filterData()">
+                    Area
+                    <span class="filter-icon" ng-click="toggleFilter('Area')">🔻</span>
+                    <select class="filter-dropdown" ng-model="filters.Area" ng-click="initializeFilterOptions('Area')"
+                        ng-change="filterData()">
                         <option value="">All</option>
-                        <option ng-repeat="option in filterOptions.Language" value="{{ option }}">{{ option }}</option>
+                        <option ng-repeat="option in filterOptions.Area" value="{{ option }}">{{ option }}</option>
                     </select>
                 </th>
             </tr>
@@ -109,7 +111,7 @@
                 <td>{{ item.Country }}</td>
                 <td>{{ item.State }}</td>
                 <td>{{ item.City }}</td>
-                <td>{{ item.Language }}</td>
+                <td>{{ item.Area }}</td>
             </tr>
         </tbody>
     </table>
@@ -124,10 +126,24 @@
                 Country: '',
                 State: '',
                 City: '',
-                Language: ''
+                Area: ''
             };
 
             $scope.filterOptions = {};
+
+            $scope.clearAllFilters = function () {
+
+                $scope.filters = {
+                    Region: '',
+                    Country: '',
+                    State: '',
+                    City: '',
+                    Area: ''
+                };
+
+
+                $scope.filtereddata = $scope.data;
+            };
 
             $scope.toggleFilter = function (columnName) {
                 var filterDropdowns = document.querySelectorAll('.filter-dropdown');
@@ -177,60 +193,65 @@
                         (!$scope.filters.Country || item.Country === $scope.filters.Country) &&
                         (!$scope.filters.State || item.State === $scope.filters.State) &&
                         (!$scope.filters.City || item.City === $scope.filters.City) &&
-                        (!$scope.filters.Language || item.Language === $scope.filters.Language)
+                        (!$scope.filters.Area || item.Area === $scope.filters.Area)
                     );
                 });
             };
 
 
             $scope.data = [
-                { "Region": "Africa", "Country": "South Africa", "State": "Gauteng", "City": "Johannesburg", "Language": "English" },
-                { "Region": "Africa", "Country": "Nigeria", "State": "Lagos", "City": "Lagos", "Language": "Yoruba" },
-                { "Region": "Asia", "Country": "India", "State": "Maharashtra", "City": "Mumbai", "Language": "Hindi" },
-                { "Region": "Asia", "Country": "China", "State": "Shanghai", "City": "Shanghai", "Language": "Mandarin" },
-                { "Region": "Asia", "Country": "Japan", "State": "Tokyo", "City": "Tokyo", "Language": "Japanese" },
-                { "Region": "Asia", "Country": "South Korea", "State": "Seoul", "City": "Seoul", "Language": "Korean" },
-                { "Region": "Europe", "Country": "France", "State": "Île-de-France", "City": "Paris", "Language": "French" },
-                { "Region": "Europe", "Country": "Germany", "State": "Bavaria", "City": "Munich", "Language": "German" },
-                { "Region": "Europe", "Country": "United Kingdom", "State": "England", "City": "London", "Language": "English" },
-                { "Region": "Europe", "Country": "Italy", "State": "Lombardy", "City": "Milan", "Language": "Italian" },
-                { "Region": "North America", "Country": "United States", "State": "California", "City": "Los Angeles", "Language": "English" },
-                { "Region": "North America", "Country": "Canada", "State": "Ontario", "City": "Toronto", "Language": "English" },
-                { "Region": "North America", "Country": "Mexico", "State": "Mexico City", "City": "Mexico City", "Language": "Spanish" },
-                { "Region": "Oceania", "Country": "Australia", "State": "New South Wales", "City": "Sydney", "Language": "English" },
-                { "Region": "Oceania", "Country": "New Zealand", "State": "Auckland", "City": "Auckland", "Language": "English" },
-                { "Region": "South America", "Country": "Brazil", "State": "São Paulo", "City": "São Paulo", "Language": "Portuguese" },
-                { "Region": "South America", "Country": "Argentina", "State": "Buenos Aires", "City": "Buenos Aires", "Language": "Spanish" },
-                { "Region": "Africa", "Country": "Egypt", "State": "Cairo", "City": "Cairo", "Language": "Arabic" },
-                { "Region": "Asia", "Country": "Thailand", "State": "Bangkok", "City": "Bangkok", "Language": "Thai" },
-                { "Region": "Europe", "Country": "Spain", "State": "Madrid", "City": "Madrid", "Language": "Spanish" },
-                { "Region": "North America", "Country": "Canada", "State": "Quebec", "City": "Montreal", "Language": "French" },
-                { "Region": "South America", "Country": "Chile", "State": "Santiago", "City": "Santiago", "Language": "Spanish" },
-                { "Region": "Africa", "Country": "Kenya", "State": "Nairobi", "City": "Nairobi", "Language": "Swahili" },
-                { "Region": "Asia", "Country": "Vietnam", "State": "Ho Chi Minh City", "City": "Ho Chi Minh City", "Language": "Vietnamese" },
-                { "Region": "Europe", "Country": "Netherlands", "State": "North Holland", "City": "Amsterdam", "Language": "Dutch" },
-                { "Region": "North America", "Country": "United States", "State": "New York", "City": "New York City", "Language": "English" },
-                { "Region": "South America", "Country": "Peru", "State": "Lima", "City": "Lima", "Language": "Spanish" },
-                { "Region": "Africa", "Country": "Morocco", "State": "Casablanca-Settat", "City": "Casablanca", "Language": "Arabic" },
-                { "Region": "Asia", "Country": "Singapore", "State": "Singapore", "City": "Singapore", "Language": "English" },
-                { "Region": "Europe", "Country": "Greece", "State": "Attica", "City": "Athens", "Language": "Greek" },
-                { "Region": "North America", "Country": "Canada", "State": "British Columbia", "City": "Vancouver", "Language": "English" },
-                { "Region": "South America", "Country": "Colombia", "State": "Bogotá", "City": "Bogotá", "Language": "Spanish" },
-                { "Region": "Africa", "Country": "Tunisia", "State": "Tunis", "City": "Tunis", "Language": "Arabic" },
-                { "Region": "Asia", "Country": "Malaysia", "State": "Kuala Lumpur", "City": "Kuala Lumpur", "Language": "Malay" },
-                { "Region": "Europe", "Country": "Switzerland", "State": "Zurich", "City": "Zurich", "Language": "German" },
-                { "Region": "North America", "Country": "United States", "State": "Florida", "City": "Miami", "Language": "English" },
-                { "Region": "South America", "Country": "Ecuador", "State": "Pichincha", "City": "Quito", "Language": "Spanish" },
-                { "Region": "Africa", "Country": "Algeria", "State": "Algiers", "City": "Algiers", "Language": "Arabic" },
-                { "Region": "Asia", "Country": "Saudi Arabia", "State": "Riyadh", "City": "Riyadh", "Language": "Arabic" },
-                { "Region": "Europe", "Country": "Austria", "State": "Vienna", "City": "Vienna", "Language": "German" },
-                { "Region": "North America", "Country": "Canada", "State": "Alberta", "City": "Calgary", "Language": "English" },
-                { "Region": "South America", "Country": "Venezuela", "State": "Capital District", "City": "Caracas", "Language": "Spanish" },
-                { "Region": "Africa", "Country": "Uganda", "State": "Kampala", "City": "Kampala", "Language": "English" },
-                { "Region": "Asia", "Country": "Pakistan", "State": "Sindh", "City": "Karachi", "Language": "Urdu" },
-                { "Region": "Europe", "Country": "Sweden", "State": "Stockholm", "City": "Stockholm", "Language": "Swedish" },
-                { "Region": "North America", "Country": "United States", "State": "Texas", "City": "Houston", "Language": "English" },
-                { "Region": "South America", "Country": "Bolivia", "State": "La Paz", "City": "La Paz", "Language": "Spanish" }
+                { "Region": "Asia", "Country": "India", "State": "TamilNadu", "City": "Chennai", "Area": "Mylapore" },
+                { "Region": "Asia", "Country": "India", "State": "TamilNadu", "City": "Chennai", "Area": "Anna Nagar" },
+                { "Region": "Asia", "Country": "India", "State": "TamilNadu", "City": "Coimbatore", "Area": "Gandhipuram" },
+                { "Region": "Asia", "Country": "India", "State": "TamilNadu", "City": "Coimbatore", "Area": "RS Puram" },
+                { "Region": "Asia", "Country": "India", "State": "TamilNadu", "City": "Madurai", "Area": "Goripalayam" },
+                { "Region": "Asia", "Country": "India", "State": "TamilNadu", "City": "Madurai", "Area": "Anna Nagar" },
+
+                { "Region": "Asia", "Country": "India", "State": "Kerala", "City": "Trivandrum", "Area": "Kovalam" },
+                { "Region": "Asia", "Country": "India", "State": "Kerala", "City": "Trivandrum", "Area": "Pettah" },
+                { "Region": "Asia", "Country": "India", "State": "Kerala", "City": "Kochi", "Area": "Ernakulam" },
+                { "Region": "Asia", "Country": "India", "State": "Kerala", "City": "Kochi", "Area": "Mattancherry" },
+                { "Region": "Asia", "Country": "India", "State": "Kerala", "City": "Kollam", "Area": "Asramam" },
+                { "Region": "Asia", "Country": "India", "State": "Kerala", "City": "Kollam", "Area": "Chinnakada" },
+
+                { "Region": "Asia", "Country": "Pakistan", "State": "Sindh", "City": "Karachi", "Area": "Clifton" },
+                { "Region": "Asia", "Country": "Pakistan", "State": "Sindh", "City": "Karachi", "Area": "Saddar" },
+                { "Region": "Asia", "Country": "Pakistan", "State": "Sindh", "City": "Sukkur", "Area": "Barrage Colony" },
+                { "Region": "Asia", "Country": "Pakistan", "State": "Sindh", "City": "Sukkur", "Area": "Sarafa Bazaar" },
+                { "Region": "Asia", "Country": "Pakistan", "State": "Sindh", "City": "Larkana", "Area": "Ratodero" },
+                { "Region": "Asia", "Country": "Pakistan", "State": "Sindh", "City": "Larkana", "Area": "Naudero" },
+
+                { "Region": "Asia", "Country": "Pakistan", "State": "Balochistan", "City": "Quetta", "Area": "Cantt Area" },
+                { "Region": "Asia", "Country": "Pakistan", "State": "Balochistan", "City": "Quetta", "Area": "Gulistan Road" },
+                { "Region": "Asia", "Country": "Pakistan", "State": "Balochistan", "City": "Gwadar", "Area": "Shahdara" },
+                { "Region": "Asia", "Country": "Pakistan", "State": "Balochistan", "City": "Gwadar", "Area": "Sangar" },
+                { "Region": "Asia", "Country": "Pakistan", "State": "Balochistan", "City": "Turbat", "Area": "Sarbaz Road" },
+                { "Region": "Asia", "Country": "Pakistan", "State": "Balochistan", "City": "Turbat", "Area": "Gorazabadfghjkl" },
+
+                { "Region": "Europe", "Country": "France", "State": "Île-de-France", "City": "Paris", "Area": "Le Marais" },
+                { "Region": "Europe", "Country": "France", "State": "Île-de-France", "City": "Paris", "Area": "Montmartre" },
+                { "Region": "Europe", "Country": "France", "State": "Provence-Alpes-Côte d'Azur", "City": "Nice", "Area": "Old Town" },
+                { "Region": "Europe", "Country": "France", "State": "Provence-Alpes-Côte d'Azur", "City": "Nice", "Area": "Promenade des Anglais" },
+                { "Region": "Europe", "Country": "Germany", "State": "Bavaria", "City": "Munich", "Area": "Marienplatz" },
+                { "Region": "Europe", "Country": "Germany", "State": "Bavaria", "City": "Munich", "Area": "Schwabing" },
+                { "Region": "Europe", "Country": "Spain", "State": "Catalonia", "City": "Barcelona", "Area": "Gothic Quarter" },
+                { "Region": "Europe", "Country": "Spain", "State": "Catalonia", "City": "Barcelona", "Area": "La Rambla" },
+                { "Region": "Europe", "Country": "Italy", "State": "Lazio", "City": "Rome", "Area": "Trastevere" },
+                { "Region": "Europe", "Country": "Italy", "State": "Lazio", "City": "Rome", "Area": "Colosseum" },
+                { "Region": "Europe", "Country": "United Kingdom", "State": "England", "City": "London", "Area": "Westminster" },
+                { "Region": "Europe", "Country": "United Kingdom", "State": "England", "City": "London", "Area": "Covent Garden" },
+                { "Region": "Europe", "Country": "Greece", "State": "Attica", "City": "Athens", "Area": "Plaka" },
+                { "Region": "Europe", "Country": "Greece", "State": "Attica", "City": "Athens", "Area": "Monastiraki" },
+                { "Region": "Europe", "Country": "Netherlands", "State": "North Holland", "City": "Amsterdam", "Area": "Jordaan" },
+                { "Region": "Europe", "Country": "Netherlands", "State": "North Holland", "City": "Amsterdam", "Area": "Red Light District" },
+                { "Region": "Europe", "Country": "Switzerland", "State": "Zurich", "City": "Zurich", "Area": "Old Town" },
+                { "Region": "Europe", "Country": "Switzerland", "State": "Zurich", "City": "Zurich", "Area": "Lake Zurich" },
+                { "Region": "Europe", "Country": "Austria", "State": "Vienna", "City": "Vienna", "Area": "Innere Stadt" },
+                { "Region": "Europe", "Country": "Austria", "State": "Vienna", "City": "Vienna", "Area": "Schönbrunn Palace" },
+                { "Region": "Europe", "Country": "Portugal", "State": "Lisbon", "City": "Lisbon", "Area": "Alfama" },
+                { "Region": "Europe", "Country": "Portugal", "State": "Lisbon", "City": "Lisbon", "Area": "Bairro Alto" },
+                { "Region": "Europe", "Country": "Czech Republic", "State": "Prague", "City": "Prague", "Area": "Old Town Square" },
+                { "Region": "Europe", "Country": "Czech Republic", "State": "Prague", "City": "Prague", "Area": "Charles Bridge" }
             ];
 
 
