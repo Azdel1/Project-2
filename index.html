@@ -1,0 +1,242 @@
+<!DOCTYPE html>
+<html ng-app="myApp">
+
+<head>
+    <title>AngularJS Region, Country, and City Grid</title>
+    <style>
+        table {
+            width: 60%;
+            border-collapse: collapse;
+        }
+
+        th,
+        td {
+            border: 1px solid #ccc;
+            padding: 8px;
+            text-align: left;
+        }
+
+        th {
+            background-color: #f2f2f2;
+            position: relative;
+        }
+
+        .filter-icon {
+            position: absolute;
+            top: 50%;
+            right: 10px;
+            transform: translateY(-50%);
+            cursor: pointer;
+        }
+
+        .filter-dropdown {
+            display: none;
+            position: absolute;
+            top: 100%;
+            left: 0;
+            width: 100%;
+            z-index: 1;
+        }
+
+        th:hover .filter-icon {
+            display: block;
+        }
+
+        th.active .filter-dropdown {
+            display: block;
+        }
+    </style>
+    <script src="https://ajax.googleapis.com/ajax/libs/angularjs/1.3.14/angular.min.js"></script>
+</head>
+
+<body ng-controller="GridController">
+
+    <h1>Region, Country, and City Grid</h1>
+
+    <table>
+        <thead>
+            <tr>
+                <th>
+                    Region
+                    <span class="filter-icon" ng-click="toggleFilter('Region')">🔻</span>
+                    <select class="filter-dropdown" ng-model="filters.Region"
+                        ng-click="initializeFilterOptions('Region')" ng-change="filterData()">
+                        <option value="">All</option>
+                        <option ng-repeat="option in filterOptions.Region" value="{{ option }}">{{ option }}</option>
+                    </select>
+                </th>
+                <th>
+                    Country
+                    <span class="filter-icon" ng-click="toggleFilter('Country')">🔻</span>
+                    <select class="filter-dropdown" ng-model="filters.Country"
+                        ng-click="initializeFilterOptions('Country')" ng-change="filterData()">
+                        <option value="">All</option>
+                        <option ng-repeat="option in filterOptions.Country" value="{{ option }}">{{ option }}</option>
+                    </select>
+                </th>
+                <th>
+                    State
+                    <span class="filter-icon" ng-click="toggleFilter('State')">🔻</span>
+                    <select class="filter-dropdown" ng-model="filters.State" ng-click="initializeFilterOptions('State')"
+                        ng-change="filterData()">
+                        <option value="">All</option>
+                        <option ng-repeat="option in filterOptions.State" value="{{ option }}">{{ option }}</option>
+                    </select>
+                </th>
+                <th>
+                    City
+                    <span class="filter-icon" ng-click="toggleFilter('City')">🔻</span>
+                    <select class="filter-dropdown" ng-model="filters.City" ng-click="initializeFilterOptions('City')"
+                        ng-change="filterData()">
+                        <option value="">All</option>
+                        <option ng-repeat="option in filterOptions.City" value="{{ option }}">{{ option }}</option>
+                    </select>
+                </th>
+                <th>
+                    Language
+                    <span class="filter-icon" ng-click="toggleFilter('Language')">🔻</span>
+                    <select class="filter-dropdown" ng-model="filters.Language"
+                        ng-click="initializeFilterOptions('Language')" ng-change="filterData()">
+                        <option value="">All</option>
+                        <option ng-repeat="option in filterOptions.Language" value="{{ option }}">{{ option }}</option>
+                    </select>
+                </th>
+            </tr>
+        </thead>
+        <tbody>
+            <tr ng-repeat="item in filtereddata">
+                <td>{{ item.Region }}</td>
+                <td>{{ item.Country }}</td>
+                <td>{{ item.State }}</td>
+                <td>{{ item.City }}</td>
+                <td>{{ item.Language }}</td>
+            </tr>
+        </tbody>
+    </table>
+
+    <script>
+        var app = angular.module('myApp', []);
+
+        app.controller('GridController', function ($scope, $document) {
+
+            $scope.filters = {
+                Region: '',
+                Country: '',
+                State: '',
+                City: '',
+                Language: ''
+            };
+
+            $scope.filterOptions = {};
+
+            $scope.toggleFilter = function (columnName) {
+                var filterDropdowns = document.querySelectorAll('.filter-dropdown');
+                for (var i = 0; i < filterDropdowns.length; i++) {
+                    filterDropdowns[i].style.display = 'none';
+                }
+                var filterDropdown = document.querySelector('.filter-dropdown[ng-model="filters.' + columnName + '"]');
+                if (filterDropdown) {
+                    filterDropdown.style.display = 'block';
+                }
+            };
+
+            $scope.initializeFilterOptions = function (columnName) {
+                if (!$scope.filterOptions[columnName]) {
+                    $scope.filterOptions[columnName] = $scope.getUniqueValues(columnName);
+                }
+            };
+
+            $scope.closeFilterDropdown = function () {
+                var filterDropdowns = document.querySelectorAll('.filter-dropdown');
+                for (var i = 0; i < filterDropdowns.length; i++) {
+                    filterDropdowns[i].style.display = 'none';
+                }
+            };
+
+            $document.on('click', function (event) {
+                if (!event.target.closest('.filter-dropdown') && !event.target.closest('table')) {
+                    $scope.closeFilterDropdown();
+                }
+            });
+
+            $scope.getUniqueValues = function (columnName) {
+                var uniqueValues = [];
+                for (var i = 0; i < $scope.data.length; i++) {
+                    var value = $scope.data[i][columnName];
+                    if (uniqueValues.indexOf(value) === -1) {
+                        uniqueValues.push(value);
+                    }
+                }
+                return uniqueValues;
+            };
+
+            $scope.filterData = function () {
+                $scope.filtereddata = $scope.data.filter(function (item) {
+                    return (
+                        (!$scope.filters.Region || item.Region === $scope.filters.Region) &&
+                        (!$scope.filters.Country || item.Country === $scope.filters.Country) &&
+                        (!$scope.filters.State || item.State === $scope.filters.State) &&
+                        (!$scope.filters.City || item.City === $scope.filters.City) &&
+                        (!$scope.filters.Language || item.Language === $scope.filters.Language)
+                    );
+                });
+            };
+
+
+            $scope.data = [
+                { "Region": "Africa", "Country": "South Africa", "State": "Gauteng", "City": "Johannesburg", "Language": "English" },
+                { "Region": "Africa", "Country": "Nigeria", "State": "Lagos", "City": "Lagos", "Language": "Yoruba" },
+                { "Region": "Asia", "Country": "India", "State": "Maharashtra", "City": "Mumbai", "Language": "Hindi" },
+                { "Region": "Asia", "Country": "China", "State": "Shanghai", "City": "Shanghai", "Language": "Mandarin" },
+                { "Region": "Asia", "Country": "Japan", "State": "Tokyo", "City": "Tokyo", "Language": "Japanese" },
+                { "Region": "Asia", "Country": "South Korea", "State": "Seoul", "City": "Seoul", "Language": "Korean" },
+                { "Region": "Europe", "Country": "France", "State": "Île-de-France", "City": "Paris", "Language": "French" },
+                { "Region": "Europe", "Country": "Germany", "State": "Bavaria", "City": "Munich", "Language": "German" },
+                { "Region": "Europe", "Country": "United Kingdom", "State": "England", "City": "London", "Language": "English" },
+                { "Region": "Europe", "Country": "Italy", "State": "Lombardy", "City": "Milan", "Language": "Italian" },
+                { "Region": "North America", "Country": "United States", "State": "California", "City": "Los Angeles", "Language": "English" },
+                { "Region": "North America", "Country": "Canada", "State": "Ontario", "City": "Toronto", "Language": "English" },
+                { "Region": "North America", "Country": "Mexico", "State": "Mexico City", "City": "Mexico City", "Language": "Spanish" },
+                { "Region": "Oceania", "Country": "Australia", "State": "New South Wales", "City": "Sydney", "Language": "English" },
+                { "Region": "Oceania", "Country": "New Zealand", "State": "Auckland", "City": "Auckland", "Language": "English" },
+                { "Region": "South America", "Country": "Brazil", "State": "São Paulo", "City": "São Paulo", "Language": "Portuguese" },
+                { "Region": "South America", "Country": "Argentina", "State": "Buenos Aires", "City": "Buenos Aires", "Language": "Spanish" },
+                { "Region": "Africa", "Country": "Egypt", "State": "Cairo", "City": "Cairo", "Language": "Arabic" },
+                { "Region": "Asia", "Country": "Thailand", "State": "Bangkok", "City": "Bangkok", "Language": "Thai" },
+                { "Region": "Europe", "Country": "Spain", "State": "Madrid", "City": "Madrid", "Language": "Spanish" },
+                { "Region": "North America", "Country": "Canada", "State": "Quebec", "City": "Montreal", "Language": "French" },
+                { "Region": "South America", "Country": "Chile", "State": "Santiago", "City": "Santiago", "Language": "Spanish" },
+                { "Region": "Africa", "Country": "Kenya", "State": "Nairobi", "City": "Nairobi", "Language": "Swahili" },
+                { "Region": "Asia", "Country": "Vietnam", "State": "Ho Chi Minh City", "City": "Ho Chi Minh City", "Language": "Vietnamese" },
+                { "Region": "Europe", "Country": "Netherlands", "State": "North Holland", "City": "Amsterdam", "Language": "Dutch" },
+                { "Region": "North America", "Country": "United States", "State": "New York", "City": "New York City", "Language": "English" },
+                { "Region": "South America", "Country": "Peru", "State": "Lima", "City": "Lima", "Language": "Spanish" },
+                { "Region": "Africa", "Country": "Morocco", "State": "Casablanca-Settat", "City": "Casablanca", "Language": "Arabic" },
+                { "Region": "Asia", "Country": "Singapore", "State": "Singapore", "City": "Singapore", "Language": "English" },
+                { "Region": "Europe", "Country": "Greece", "State": "Attica", "City": "Athens", "Language": "Greek" },
+                { "Region": "North America", "Country": "Canada", "State": "British Columbia", "City": "Vancouver", "Language": "English" },
+                { "Region": "South America", "Country": "Colombia", "State": "Bogotá", "City": "Bogotá", "Language": "Spanish" },
+                { "Region": "Africa", "Country": "Tunisia", "State": "Tunis", "City": "Tunis", "Language": "Arabic" },
+                { "Region": "Asia", "Country": "Malaysia", "State": "Kuala Lumpur", "City": "Kuala Lumpur", "Language": "Malay" },
+                { "Region": "Europe", "Country": "Switzerland", "State": "Zurich", "City": "Zurich", "Language": "German" },
+                { "Region": "North America", "Country": "United States", "State": "Florida", "City": "Miami", "Language": "English" },
+                { "Region": "South America", "Country": "Ecuador", "State": "Pichincha", "City": "Quito", "Language": "Spanish" },
+                { "Region": "Africa", "Country": "Algeria", "State": "Algiers", "City": "Algiers", "Language": "Arabic" },
+                { "Region": "Asia", "Country": "Saudi Arabia", "State": "Riyadh", "City": "Riyadh", "Language": "Arabic" },
+                { "Region": "Europe", "Country": "Austria", "State": "Vienna", "City": "Vienna", "Language": "German" },
+                { "Region": "North America", "Country": "Canada", "State": "Alberta", "City": "Calgary", "Language": "English" },
+                { "Region": "South America", "Country": "Venezuela", "State": "Capital District", "City": "Caracas", "Language": "Spanish" },
+                { "Region": "Africa", "Country": "Uganda", "State": "Kampala", "City": "Kampala", "Language": "English" },
+                { "Region": "Asia", "Country": "Pakistan", "State": "Sindh", "City": "Karachi", "Language": "Urdu" },
+                { "Region": "Europe", "Country": "Sweden", "State": "Stockholm", "City": "Stockholm", "Language": "Swedish" },
+                { "Region": "North America", "Country": "United States", "State": "Texas", "City": "Houston", "Language": "English" },
+                { "Region": "South America", "Country": "Bolivia", "State": "La Paz", "City": "La Paz", "Language": "Spanish" }
+            ];
+
+
+            $scope.filtereddata = $scope.data;
+        });
+    </script>
+</body>
+
+</html>
